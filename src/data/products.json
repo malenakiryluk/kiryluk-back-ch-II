@@ -1,0 +1,12 @@
+[
+     {
+          "id": 1,
+          "title": "luka 2",
+          "description": "jordan luka 2 reactive",
+          "code": 80,
+          "price": 300000,
+          "status": true,
+          "stock": 10,
+          "category": "basket"
+     }
+]
