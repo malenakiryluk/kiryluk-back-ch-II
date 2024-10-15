@@ -7,7 +7,7 @@ class UsersMongoManager {
     }
 
     static async getUserBy(filter){
-        return await usersModel.findOne(filter).lean
+        return await usersModel.findOne(filter).lean()
     }
 }
 

@@ -1,8 +1,20 @@
+const jwt = require("jsonwebtoken")
+const {config} = require("../config/config")
 const auth = (req, res, next) =>{
-    if (!req.session.usuario) {
+    if (!req.headers.authorization) {
         res.setHeader('Content-Type','application/json');
-        return res.status(401).json({error:`no hay usuarios autenticados`})
+        return res.status(401).json({error:`unauthorized`})
     }
-    return next()
+
+    let token = req.headers.authorization.split(" ")[1]
+
+    try {
+        req.user = jwt.verify(token, config.SECRET)
+    } catch (error) {
+        res.setHeader('Content-Type','application/json');
+        return res.status(401).json({error:`${error.message}`})
+    }
+
+    next()
 }
 module.exports=auth;

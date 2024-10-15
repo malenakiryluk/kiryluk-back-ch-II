@@ -10,6 +10,9 @@ const {Server} = require("socket.io");
 const connDB=require('./connDB.js');
 const config = require("./config/config.js")
 const session = require("express-session")
+const passport=require("passport")
+const initPassport = require("./config/passport.config.js")
+
 //const { Server } = require("http");
 let io;
 
@@ -23,6 +26,8 @@ app.set('views', path.join(__dirname,'./views'));
 app.use(express.static(path.join(__dirname,'/public')));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+initPassport()
+app.use(passport.authenticate())
 app.use(express.static("./src/public"))
 app.use(session({
     secret:config.SECRET_SESSION,

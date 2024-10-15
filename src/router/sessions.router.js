@@ -1,36 +1,34 @@
 const { Router }=require('express');
 const router=Router()
-const crypto=require("crypto"); 
+const passport=require("passport")
+const jwt=require("jsonwebtoken")
 const UsersManager=UsersMongoManager = require('../dao/UsersMongoManager');
 const config = require("../config/config")
 
-router.post('/registro',async (req,res)=>{
-
-    let {name, email, password} = req.body
-
-    if (!name || !email || !password) {
-        res.setHeader('Content-Type','application/json');
-        return res.status(400).json({error:`complete los datos por favor`})
-    }
-
-    try {
-        let exists = await UsersManager.getUserBy({email})
-        if (exists) {
-            res.setHeader('Content-Type','application/json');
-            return res.status(400).json({error:`ya existe un usuario con mail ${email}`})
-        }
-
-        password=crypto.createHmac("sha256", config.SECRET).update(password).digest("hex")
-
-        let newUser = await UsersManager.createUser({name, email, password})
-
-        res.setHeader('Content-Type','application/json')
-        res.status(201).json({mensaje: "registro exitoso", newUser})
-        
-    } catch (error) {
-        
-    }
+router.get('/error', async (req, res)=>{
+    res.setHeader('Content-Type','application/json');
+    return res.status(401).json({error:`error al autenticar`})
 })
+
+router.post(
+    '/registro', 
+    passport.authenticate("registro", {sessions:false, failureRedirect:"/api/sessions/error"}),
+    (req,res)=>{
+        res.setHeader('Content-Type','application/json');
+        return res.status(201).json({payload: 'registro correcto'});
+    }
+)
+
+router.post('/login', 
+    passport.authenticate("registro", {sessions:false, failureRedirect: "api/sessions/error"}),
+    (req,res)=>{
+
+        let token =jwt.sign(req.user, config.SECRET, {expiresIn: 3600})
+        
+        res.setHeader('Content-Type','application/json');
+        return res.status(201).json({payload: 'registro correcto'});
+    }
+)
 
 
 module.exports={router}
