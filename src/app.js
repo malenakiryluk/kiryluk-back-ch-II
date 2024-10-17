@@ -11,6 +11,7 @@ const connDB=require('./connDB.js');
 const {config} = require("./config/config.js")
 const {auth} = require("./middleware/auth.js")
 const passport=require("passport")
+const cookieParser=require("cookie-parser")
 const {initPassport} = require("./config/passport.config.js")
 
 //const { Server } = require("http");
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 initPassport()
 app.use(passport.initialize())
+app.use(cookieParser())
 app.use(express.static("./src/public"))
 
 app.use("/api/products", auth, productRouter);

@@ -27,7 +27,11 @@ const getProducts=async()=>{
         sort=-1
     }
 
-    let respuesta=await fetch(`/api/products?page=${page}&limit=${limit}&sort=${sort}`)
+    let respuesta=await fetch(`/api/products?page=${page}&limit=${limit}&sort=${sort}`, {
+        // headers:{
+        //     "Authorization": `Berearer ${localStorage.getItem("token")}`
+        // }
+    })
     let products =await respuesta.json()
     console.log(products);
     

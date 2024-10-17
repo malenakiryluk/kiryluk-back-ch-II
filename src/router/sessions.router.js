@@ -3,7 +3,7 @@ const router=Router()
 const passport=require("passport")
 const jwt=require("jsonwebtoken")
 const UsersManager=UsersMongoManager = require('../dao/UsersMongoManager');
-const config = require("../config/config")
+const {config} = require("../config/config")
 
 router.get('/error', async (req, res)=>{
     res.setHeader('Content-Type','application/json');
@@ -25,9 +25,9 @@ router.post('/login',
     (req,res)=>{
 
         let token =jwt.sign(req.user, config.SECRET, {expiresIn: 3600})
-        
+        res.cookie("tokenCookie", token)
         res.setHeader('Content-Type','application/json');
-        return res.status(201).json({payload: 'registro correcto', usuarioLogueado:req.user, token});
+        return res.status(201).json({payload: 'registro correcto', usuarioLogueado:req.user});
     }
 )
 
