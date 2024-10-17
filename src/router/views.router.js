@@ -1,7 +1,5 @@
 const {Router}=require('express');
 const router=Router()
-const auth = require("../middleware/auth.js")
-
 const ProductManager = ProductMongoManager = require("../dao/ProductMongoManager");
 const CartManager = CartMongoManager=require("../dao/CartMongoManager.js");
 
@@ -25,7 +23,7 @@ router.get("/register", async(req, res)=>{
     res.status(200).render('register');
 
 })
-router.get("/products", auth, async(req, res)=>{
+router.get("/products", async(req, res)=>{
 
     res.setHeader('Content-Type','text/html');
     res.status(200).render('products');

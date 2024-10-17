@@ -6,4 +6,4 @@ const config = {
     SECRET: "malenaCoder"
 }
 
-module.exports=config;
+module.exports={config}

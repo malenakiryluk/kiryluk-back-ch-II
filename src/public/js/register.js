@@ -32,6 +32,8 @@ btnSubmit.addEventListener("click", async (e)=>{
     if (response.status>=400) {
         divNotes.textContent=datos.error 
     }else{
-        window.location.href=`/login?mensaje=registro exitodo para ${datos.newUser.email}`
+        console.log(datos);
+        localStorage.setItem("token", datos.token)
+        window.location.href=`/login?mensaje=registro exitoso para ${datos.newUser.email}`
     }
 })

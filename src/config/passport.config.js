@@ -5,38 +5,34 @@ const generaHash = require("../utils")
 const validaHash = require("../utils")
 
 
-const initPassport = ()=>{
+const initPassport=()=>{
 
-    passport.use("registro",
+    passport.use("registro", 
         new local.Strategy(
             {
-                passReqToCallback:true,
+                passReqToCallback: true, 
                 usernameField: "email"
             },
-            async (req, username, password, done)=>{
+            async(req, username, password, done)=>{
                 try {
-                    let {name} = req.body
-                    if (!name) {
+                    let {name}=req.body
+                    if(!name){
                         return done(null, false)
                     }
-                    let exists= await UsersManager.getUserBy({email: username})
-                    if (exists) {
+                    let existe=await UsersManager.getUserBy({email:username})
+                    if(existe){
                         return done(null, false)
                     }
 
-                    password = generaHash(password)
+                    password=generaHash(password)
 
-                    let newUser = await UsersManager.createUser({name, email:username, password})
+                    let newUser=await UsersManager.createUser ({name, email: username, password})
                     return done(null, newUser)
-
                 } catch (error) {
                     return done(error)
-                    
-                    
                 }
             }
         )
-        
     )
 
     passport.use("login",
@@ -69,4 +65,4 @@ const initPassport = ()=>{
 
 
 
-module.exports=initPassport
+module.exports={initPassport}

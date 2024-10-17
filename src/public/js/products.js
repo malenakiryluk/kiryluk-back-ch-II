@@ -29,6 +29,8 @@ const getProducts=async()=>{
 
     let respuesta=await fetch(`/api/products?page=${page}&limit=${limit}&sort=${sort}`)
     let products =await respuesta.json()
+    console.log(products);
+    
     products.payload.products.forEach(p=>{
         let liProduct=document.createElement("li")
         liProduct.innerHTML=`<h3> titulo: ${p.title}</h3>

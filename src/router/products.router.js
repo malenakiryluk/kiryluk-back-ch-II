@@ -100,8 +100,8 @@ router.post("/", async(req, res) => {
         let preProd={title, description, code, price, status, stock, category}
         let nuevoProd=await ProductManager.addProduct(preProd)
 
-        let productsAct = await ProductManager.getProduct()
-        req.io.emit('productosActualizados', productsAct)
+        //let productsAct = await ProductManager.getProduct()
+        //req.io.emit('productosActualizados', productsAct)
 
         res.setHeader('Content-Type','application/json');
         return res.status(201).json({nuevoProd});
@@ -165,8 +165,8 @@ router.put("/:pid", async(req, res) => {
             res.setHeader('Content-Type','application/json');
             return res.status(400).json({error:`no se ha podido modificar el producto`})
         }
-        let productsAct = await ProductManager.getProduct()
-        req.io.emit('productosActualizados', productsAct)
+       // let productsAct = await ProductManager.getProduct()
+        //req.io.emit('productosActualizados', productsAct)
         res.setHeader('Content-Type','application/json');
         return res.status(200).json({productModificado});
     } catch (error) {
@@ -198,8 +198,8 @@ router.delete("/:pid", async(req, res) => {
             res.setHeader('Content-Type','application/json');
             return res.status(400).json({error:`no se ha podido eliminar el producto correcatmente`})
         }
-        let productsAct = await ProductManager.getProduct()
-        req.io.emit('productosActualizados', productsAct)
+        //let productsAct = await ProductManager.getProduct()
+        //req.io.emit('productosActualizados', productsAct)
         res.setHeader('Content-Type','application/json');
         return res.status(200).json({pDeleted});
     } catch (error) {

@@ -8,10 +8,10 @@ const engine=require('express-handlebars').engine
 const path=require('path');
 const {Server} = require("socket.io");
 const connDB=require('./connDB.js');
-const config = require("./config/config.js")
-const session = require("express-session")
+const {config} = require("./config/config.js")
+const {auth} = require("./middleware/auth.js")
 const passport=require("passport")
-const initPassport = require("./config/passport.config.js")
+const {initPassport} = require("./config/passport.config.js")
 
 //const { Server } = require("http");
 let io;
@@ -27,20 +27,10 @@ app.use(express.static(path.join(__dirname,'/public')));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 initPassport()
-app.use(passport.authenticate())
+app.use(passport.initialize())
 app.use(express.static("./src/public"))
-app.use(session({
-    secret:config.SECRET_SESSION,
-    resave:true,
-    saveUninitialized:true
-}))
-app.use(
-    "/api/products",
-    (req, res, next)=>{
-        req.io= io
-        next()
-    },
-    productRouter);
+
+app.use("/api/products", auth, productRouter);
 app.use("/api/carts", cartRouter);
 
 app.use("/api/sessions", sessionsRuter);
