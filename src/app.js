@@ -32,7 +32,7 @@ app.use(passport.initialize())
 app.use(cookieParser())
 app.use(express.static("./src/public"))
 
-app.use("/api/products", auth, productRouter);
+app.use("/api/products", passport.authenticate('current',{session:false}), productRouter);
 app.use("/api/carts", cartRouter);
 
 app.use("/api/sessions", sessionsRuter);

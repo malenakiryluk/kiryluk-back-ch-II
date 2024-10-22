@@ -1,9 +1,20 @@
 const passport=require("passport")
 const local =require("passport-local")
+const passportJWT = require("passport-jwt")
 const UsersManager = UsersMongoManager=require("../dao/UsersMongoManager")
 const generaHash = require("../utils")
 const validaHash = require("../utils")
+const {config} =require("./config.js")
 
+const searchToken= req=>{
+    let token = null
+
+    if (req.cookies.tokenCookie) {
+        token= req.cookies.tokenCookie
+    }
+
+    return token
+}
 
 const initPassport=()=>{
 
@@ -15,8 +26,8 @@ const initPassport=()=>{
             },
             async(req, username, password, done)=>{
                 try {
-                    let {name}=req.body
-                    if(!name){
+                    let {first_name, last_name, age, cart, role}=req.body
+                    if(!first_name || !last_name || !age || !cart || !role){
                         return done(null, false)
                     }
                     let existe=await UsersManager.getUserBy({email:username})
@@ -26,7 +37,7 @@ const initPassport=()=>{
 
                     password=generaHash(password)
 
-                    let newUser=await UsersManager.createUser ({name, email: username, password})
+                    let newUser=await UsersManager.createUser ({first_name, last_name, email: username, password, age, cart, role})
                     return done(null, newUser)
                 } catch (error) {
                     return done(error)
@@ -59,6 +70,22 @@ const initPassport=()=>{
             }
         )
         
+    )
+
+    passport.use("current",
+        new passportJWT.Strategy(
+            {
+                secretOrKey: config.SECRET,
+                jwtFromRequest: new passportJWT.ExtractJwt.fromExtractors([searchToken])
+            },
+            async (user, done)=>{
+                try {
+                    return done(null,user)
+                } catch (error) {
+                    return done(error)
+                }
+            }
+        )
     )
 
 }

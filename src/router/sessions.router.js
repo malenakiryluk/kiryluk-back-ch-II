@@ -16,7 +16,7 @@ router.post(
     (req, res)=>{
         // req.user // lo deja passport.authenticate si todo sale OK
         res.setHeader('Content-Type','application/json');
-        return res.status(201).json({payload:`Registro exitoso para ${req.user.nombre}`, usuario:req.user});
+        return res.status(201).json({payload:`Registro exitoso para ${req.user.first_name}`, usuario:req.user});
     }
 )
 
@@ -25,9 +25,17 @@ router.post('/login',
     (req,res)=>{
 
         let token =jwt.sign(req.user, config.SECRET, {expiresIn: 3600})
-        res.cookie("tokenCookie", token)
+        res.cookie("tokenCookie", token, {httpOnly:true})
         res.setHeader('Content-Type','application/json');
-        return res.status(201).json({payload: 'registro correcto', usuarioLogueado:req.user});
+        return res.status(201).json({payload: 'login correcto', logedUser:req.user});
+    }
+)
+
+router.post('/current',
+    passport.authenticate("current", {session:false, failureRedirect:"api/sessions/error"}),
+    (req,res)=>{
+        res.setHeader('Content-Type','application/json');
+        return res.status(200).json({payload: 'usuario logeado:', logedUser:req.user});
     }
 )
 
