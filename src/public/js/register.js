@@ -23,7 +23,7 @@ btnSubmit.addEventListener("click", async (e)=>{
     let response = await fetch("api/sessions/registro",{
         method:"post",
         headers:{
-            "Content-Type":"aplication/json"
+            "Content-Type":"application/json"
         },
         body:JSON.stringify(body)
     }) 

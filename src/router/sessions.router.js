@@ -1,9 +1,7 @@
 const { Router }=require('express');
 const router=Router()
 const passport=require("passport")
-const jwt=require("jsonwebtoken")
-const UsersManager=UsersMongoManager = require('../dao/UsersMongoManager');
-const {config} = require("../config/config")
+const {createUser, loginUser, verifyUser}=require("../controllers/usersController")
 
 router.get('/error', async (req, res)=>{
     res.setHeader('Content-Type','application/json');
@@ -13,31 +11,15 @@ router.get('/error', async (req, res)=>{
 router.post(
     '/registro', 
     passport.authenticate("registro", {session: false, failureRedirect:"/api/sessions/error"}),
-    (req, res)=>{
-        // req.user // lo deja passport.authenticate si todo sale OK
-        res.setHeader('Content-Type','application/json');
-        return res.status(201).json({payload:`Registro exitoso para ${req.user.first_name}`, usuario:req.user});
-    }
-)
+    createUser)
 
 router.post('/login', 
     passport.authenticate("login", {session:false, failureRedirect: "api/sessions/error"}),
-    (req,res)=>{
-
-        let token =jwt.sign(req.user, config.SECRET, {expiresIn: 3600})
-        res.cookie("tokenCookie", token, {httpOnly:true})
-        res.setHeader('Content-Type','application/json');
-        return res.status(201).json({payload: 'login correcto', logedUser:req.user});
-    }
-)
+    loginUser)
 
 router.post('/current',
     passport.authenticate("current", {session:false, failureRedirect:"api/sessions/error"}),
-    (req,res)=>{
-        res.setHeader('Content-Type','application/json');
-        return res.status(200).json({payload: 'usuario logeado:', logedUser:req.user});
-    }
-)
+    verifyUser)
 
 
 module.exports={router}

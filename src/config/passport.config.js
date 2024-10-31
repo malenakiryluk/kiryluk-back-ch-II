@@ -1,10 +1,11 @@
 const passport=require("passport")
 const local =require("passport-local")
 const passportJWT = require("passport-jwt")
-const UsersManager = UsersMongoManager=require("../dao/UsersMongoManager")
 const generaHash = require("../utils")
 const validaHash = require("../utils")
 const {config} =require("./config.js")
+const usersService = require("../services/Users.service")
+
 
 const searchToken= req=>{
     let token = null
@@ -30,14 +31,14 @@ const initPassport=()=>{
                     if(!first_name || !last_name || !age || !cart || !role){
                         return done(null, false)
                     }
-                    let existe=await UsersManager.getUserBy({email:username})
+                    let existe=await usersService.getUserBy({email:username})
                     if(existe){
                         return done(null, false)
                     }
 
                     password=generaHash(password)
 
-                    let newUser=await UsersManager.createUser ({first_name, last_name, email: username, password, age, cart, role})
+                    let newUser=await usersService.createUser ({first_name, last_name, email: username, password, age, cart, role})
                     return done(null, newUser)
                 } catch (error) {
                     return done(error)
@@ -53,7 +54,7 @@ const initPassport=()=>{
             },
             async (username, password, done)=>{
                 try {
-                    let user = await UsersManager.getUserBy({email:username})
+                    let user = await usersService.getUserBy({email:username})
                     if (!user) {
                         return done(null, false)
                     }

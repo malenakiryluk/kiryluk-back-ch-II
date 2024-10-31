@@ -2,7 +2,6 @@
 const cartsModel = require("./models/cartsModels");
 
 class CartManager {
-    //static path;
 
     static async getCart(){
         return await cartsModel.find().lean()
@@ -12,7 +11,7 @@ class CartManager {
         return await cartsModel.findOne(filter).lean()
     }
 
-    static async createCarrito() {
+    static async createCart() {
         let newCart =await cartsModel.create({products:[]})
         return newCart.toJSON()
     };
