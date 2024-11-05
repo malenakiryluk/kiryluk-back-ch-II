@@ -1,4 +1,4 @@
-const {CartMongoManager:CartManager}=require("../dao/CartMongoManager")
+const CartManager=CartMongoManager=require("../dao/CartMongoManager")
 
 class CartService{
     constructor(DAO){

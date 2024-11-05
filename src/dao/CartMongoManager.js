@@ -1,7 +1,7 @@
 //const fs=require("fs");
 const cartsModel = require("./models/cartsModels");
 
-class CartManager {
+class CartMongoManager {
 
     static async getCart(){
         return await cartsModel.find().lean()
@@ -26,4 +26,4 @@ class CartManager {
 
 
 
-module.exports=CartManager;
+module.exports=CartMongoManager;

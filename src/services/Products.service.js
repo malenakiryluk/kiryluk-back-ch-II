@@ -1,4 +1,4 @@
-const {ProductMongoManager:ProductManager}=require("../dao/ProductMongoManager")
+const ProductManager=ProductMongoManager=require("../dao/ProductMongoManager")
 
 
 class ProductService{

@@ -28,7 +28,7 @@ const initPassport=()=>{
             async(req, username, password, done)=>{
                 try {
                     let {first_name, last_name, age, cart, role}=req.body
-                    if(!first_name || !last_name || !age || !cart || !role){
+                    if(!first_name || !last_name || !age){
                         return done(null, false)
                     }
                     let existe=await usersService.getUserBy({email:username})
