@@ -306,4 +306,9 @@ const replaceQuantity=async(req,res)=>{
 
 }
 
-module.exports= {getCart, getCartBy, createCart, addProductToCart, deleteProductFromCart, deleteCartContent, replaceCartContent, replaceQuantity}
+const buyCart=async(req,res)=>{
+    res.setHeader('Content-Type','application/json');
+    return res.status(200).json({payload:"compra"});
+}
+
+module.exports= {getCart, getCartBy, createCart, addProductToCart, deleteProductFromCart, deleteCartContent, replaceCartContent, replaceQuantity, buyCart}

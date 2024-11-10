@@ -33,7 +33,7 @@ app.use(cookieParser())
 app.use(express.static("./src/public"))
 
 app.use("/api/products", passport.authenticate('current',{session:false}), productRouter);
-app.use("/api/carts", cartRouter);
+app.use("/api/carts",passport.authenticate('current',{session:false}), cartRouter);
 
 app.use("/api/sessions", sessionsRuter);
 app.use("/", viewsRouter);
