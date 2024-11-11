@@ -72,6 +72,12 @@ const getProductBy=async(req, res) => {
 }
 
 const addProduct=async(req, res) => {
+
+    if (req.user.role!=="admin") {
+        res.setHeader('Content-Type','application/json');
+        return res.status(400).json({error:`permisos insuficientes`})
+    }
+
     let {title, description, code, price, status, stock, category}=req.body  
     if(!title || !description || !code || !price || !status || !stock || !category) {
         res.setHeader('Content-Type','application/json');
@@ -117,17 +123,26 @@ const addProduct=async(req, res) => {
 
 const modifyProduct=async(req, res) => {
 
+    if (req.user.role!=="admin") {
+        res.setHeader('Content-Type','application/json');
+        return res.status(400).json({error:`permisos insuficientes`})
+    }
+
     let {pid}=req.params
     if(!isValidObjectId(pid)){
         res.setHeader('Content-Type','application/json');
         return res.status(400).json({error:`id en formato invalido`})
     }
 
-    let pAModificar=req.body
+    let pAModificar=req.body    
+    
 
     let products;
     try {
         products=await productService.getProduct()
+        products.products= products.docs
+        delete products.docs
+        delete products.totalDocs
     } catch (error) {
         console.log(error);
         res.setHeader('Content-Type','application/json');
@@ -139,15 +154,16 @@ const modifyProduct=async(req, res) => {
         )
     }
 
-    let product=products.find(p=>p.id===pid)
+    
+    let product= productService.getProductBy({_id:pid})
     if(!product){
-
         res.setHeader('Content-Type','application/json');
         return res.status(400).json({error:`producto no encontrado con id ${pid}`})
     }
 
 
     if(pAModificar.code){
+
         let existe=products.find(p=>p.code===pAModificar.code && p.id!==pid)
         if(existe){
             res.setHeader('Content-Type','application/json');
@@ -156,7 +172,7 @@ const modifyProduct=async(req, res) => {
     }
 
     try {
-        let productModificado = await productService.modifyProduct(pid,pAModificar)
+        let productModificado = await productService.modifyProduct(pid, pAModificar)
         if(!productModificado){
             res.setHeader('Content-Type','application/json');
             return res.status(400).json({error:`no se ha podido modificar el producto`})
@@ -179,6 +195,11 @@ const modifyProduct=async(req, res) => {
 }
 
 const deleteProduct=async(req, res) => {
+
+    if (req.user.role!=="admin") {
+        res.setHeader('Content-Type','application/json');
+        return res.status(400).json({error:`permisos insuficientes`})
+    }
 
     let { pid }=req.params
     if(!isValidObjectId(pid)){

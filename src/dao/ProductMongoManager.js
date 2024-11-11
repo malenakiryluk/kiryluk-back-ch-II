@@ -5,7 +5,7 @@ class ProductMongoManager {
     //static path;
 
     static async getProduct(page, limit, sort,cat){
-        return await productsModel.paginate({},{lean:true, page, limit, sort:{price:sort}})
+        return await productsModel.paginate({},{lean:true})
     }
  
     static async getProductBy(filter={}){
@@ -24,7 +24,7 @@ class ProductMongoManager {
         return await productsModel.findByIdAndDelete(pid,{new:true}).lean()
     }
 
-    static async modifyProduct(pid, pAModificar={}){
+    static async modifyProduct(pid, pAModificar){
         return await productsModel.findByIdAndUpdate(pid, pAModificar, {new:true}).lean()
     }
 

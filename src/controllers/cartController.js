@@ -1,3 +1,6 @@
+const CartMongoManager = require("../dao/CartMongoManager");
+const ticketsModel = require("../dao/models/ticketModel");
+const ProductMongoManager = require("../dao/ProductMongoManager");
 const cartService=require("../services/Carts.service")
 const productService=require("../services/Products.service")
 const { isValidObjectId } = require("mongoose");
@@ -106,6 +109,11 @@ const createCart=async(req,res) =>{
 }
 
 const addProductToCart=async(req, res) =>{
+
+    if (req.user.role!=="user") {
+        res.setHeader('Content-Type','application/json');
+        return res.status(400).json({error:`solo los usarios pueden agregar productos a sus carritos`})
+    }
 
     let { cid, pid } = req.params
     if (!isValidObjectId(cid)|| !isValidObjectId(pid)) {
@@ -307,8 +315,102 @@ const replaceQuantity=async(req,res)=>{
 }
 
 const buyCart=async(req,res)=>{
-    res.setHeader('Content-Type','application/json');
-    return res.status(200).json({payload:"compra"});
+
+    let {cid}=req.params
+    if (!isValidObjectId(cid)) {
+        res.setHeader('Content-Type','application/json');
+        return res.status(400).json({error:`no es un id valido`})
+    }
+    
+    if (req.user.cart!==cid) {
+      res.setHeader('Content-Type','application/json');
+      return res.status(400).json({error:`el carrito que se desea comparar no pertenecr al user logeado`})
+    }
+
+    try {
+        let cart = await cartService.getCartBy({_id:cid})
+        if (!cart) {
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`no existe el carrito indicado`})
+        }
+
+        const conStock=[]
+        const sinStock=[]
+        let error=false
+
+        for(let i=0; i<cart.products.length; i++){
+            let codigo=cart.products[i].product._id
+            let cant=cart.products[i].quantity
+            let product=await productService.getProductBy({_id:codigo})
+
+            if (!product) {
+                error=true
+                sinStock.push({
+                    product:codigo,
+                    quaintity:cant
+                })
+            }else{
+                if (product.stock>=cant) {
+                    conStock.push({
+                        codigo,
+                        cant,
+                        price:product.price,
+                        descrip:product.title,
+                        subtotal:product.price*cant
+                    })
+                }else{
+                    error=true
+                    sinStock.push({
+                        codigo,
+                        quantity:cant
+                    })
+                }
+            }
+        }
+
+        if (conStock.length==0) {
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`no hay productos para comprar`})
+        }
+
+        let code=Date.now()
+        let purchase_datetime=new Date()
+        let amount=conStock.reduce((acum, item)=>acum+=item.cant*item.price, 0)
+        let purchaser= req.user.email
+
+        let ticket = await ticketsModel.create({
+            code,
+            purchase_datetime,
+            amount,
+            purchaser
+        })
+
+        cart.products=sinStock
+
+        await cartService.addToCart(cid,cart)
+
+        if (error) {
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`no se pudieron facturar todos los proditos por falta de stock`})
+        }else{
+            res.setHeader('Content-Type','application/json');
+            return res.status(200).json({payload:ticket});
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        res.setHeader('Content-Type','application/json');
+        return res.status(500).json(
+            {
+                error:`Error inesperado en el servidor - Intente más tarde, o contacte a su administrador`,
+                detalle:`${error.message}`
+            }
+        )
+        
+    }
+
+
 }
 
 module.exports= {getCart, getCartBy, createCart, addProductToCart, deleteProductFromCart, deleteCartContent, replaceCartContent, replaceQuantity, buyCart}

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const {config}=require("../config/config.js")
+const passport=require("passport")
 
 const auth=(req,res,next)=>{
     if (!req.cookies.tokenCookie) {
@@ -16,6 +17,11 @@ const auth=(req,res,next)=>{
     }
 
     next()
+}
+
+const authorization = (req,res,next)=>{
+     passport.authenticate("current", {sessins:false})
+
 }
 
 module.exports={auth}

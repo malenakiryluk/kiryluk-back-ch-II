@@ -22,7 +22,7 @@ class ProductService{
         return await this.ProductManager.deleteProduct(pid)
     }
 
-    async modifyProduct(pid){        
+    async modifyProduct(pid, pAModificar){        
         return await this.ProductManager.modifyProduct(pid, pAModificar)
     }
 }

@@ -20,6 +20,6 @@ router.put("/:cid", replaceCartContent)
 
 router.put("/:cid/product/:pid", replaceQuantity)
 
-router.post("/cid/purchase", buyCart)
+router.post("/:cid/purchase", buyCart)
 
 module.exports={ router };

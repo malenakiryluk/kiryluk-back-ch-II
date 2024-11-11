@@ -18,7 +18,7 @@ class CartMongoManager {
 
     static async addToCart(cartId, cart){
         //console.log(cart);
-        console.log(cart.products);
+        //console.log(cart.products);
         return await cartsModel.updateOne({_id:cartId},cart)
     }
 
