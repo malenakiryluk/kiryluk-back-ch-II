@@ -19,9 +19,4 @@ const auth=(req,res,next)=>{
     next()
 }
 
-const authorization = (req,res,next)=>{
-     passport.authenticate("current", {sessins:false})
-
-}
-
 module.exports={auth}

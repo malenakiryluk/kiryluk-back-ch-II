@@ -358,6 +358,8 @@ const buyCart=async(req,res)=>{
                         descrip:product.title,
                         subtotal:product.price*cant
                     })
+                    product.stock=product.stock-cant
+                    await productService.modifyProduct(product._id,{stock:product.stock})
                 }else{
                     error=true
                     sinStock.push({

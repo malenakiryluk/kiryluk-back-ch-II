@@ -61,8 +61,7 @@ const initPassport=()=>{
                     if (!validaHash(password, user.password)) {
                         return done(null, false)
                     }
-
-                    delete user.password
+                    
                     return done(false, user)
 
                 } catch (error) {
