@@ -5,6 +5,7 @@ const generaHash = require("../utils")
 const validaHash = require("../utils")
 const {config} =require("./config.js")
 const usersService = require("../services/Users.service")
+const cartService = require("../services/Carts.service.js")
 
 
 const searchToken= req=>{
@@ -27,7 +28,7 @@ const initPassport=()=>{
             },
             async(req, username, password, done)=>{
                 try {
-                    let {first_name, last_name, age, cart, role}=req.body
+                    let {first_name, last_name, age, role}=req.body
                     if(!first_name || !last_name || !age){
                         return done(null, false)
                     }
@@ -37,8 +38,10 @@ const initPassport=()=>{
                     }
 
                     password=generaHash(password)
-
-                    let newUser=await usersService.createUser ({first_name, last_name, email: username, password, age, cart, role})
+                    const cart = await cartService.createCart()
+                    const cartId = cart._id
+                    
+                    let newUser=await usersService.createUser ({first_name, last_name, email: username, password, age, cartId, role})
                     return done(null, newUser)
                 } catch (error) {
                     return done(error)

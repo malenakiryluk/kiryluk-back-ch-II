@@ -347,7 +347,7 @@ const buyCart=async(req,res)=>{
                 error=true
                 sinStock.push({
                     product:codigo,
-                    quaintity:cant
+                    quantity:cant
                 })
             }else{
                 if (product.stock>=cant) {
@@ -363,7 +363,7 @@ const buyCart=async(req,res)=>{
                 }else{
                     error=true
                     sinStock.push({
-                        codigo,
+                        product:codigo,
                         quantity:cant
                     })
                 }
